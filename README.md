@@ -1,4 +1,15 @@
-# React + TypeScript + Vite
+# Built with React + TypeScript + Vite
+## firebase-react
+
+# Firebase Config 
+firebase config to firebaseSetup.ts and 'npm run dev'
+
+- In Firbase console, create a project and app.
+- Go to your. Project settings in the Firebase console.
+- In the Your apps card, select the nickname of the app for which you need a config object.
+- Select Config from the Firebase SDK snippet pane.  Get SDK for Javascript.
+
+----------------------------------------------------------------------
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { auth } from "../firebaseSetup";
 //import { useNavigate } from "react-router-dom";
@@ -14,15 +14,19 @@ const UserSignin =  () => {
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const [signInError, setSignInError] = useState<string>('');
+
 
 
   const handleSignIn = async () => {
     try {
+        setSignInError('');
       await auth.signInWithEmailAndPassword(
         emailRef.current!.value,
         passwordRef.current!.value
       );
     } catch (error) {
+        setSignInError("Failed to Login"+error);
       console.error(error + " pritning sign in error");
     }
   };
@@ -39,6 +43,14 @@ const UserSignin =  () => {
 
   {!user ? (<div className="flex flex-col justify-center items-center min-h-screen">
   <h2 className="text-3xl font-bold mb-6">Login</h2>
+
+  {signInError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline"> {signInError}</span>
+        </div>
+      )}
+
   <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <div className="mb-4">
       <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -57,13 +69,12 @@ const UserSignin =  () => {
         <i className="fas fa-lock mr-2"></i> Password
       </label>
       <input
-        className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
         ref={passwordRef}
         id="password"
         type="password"
         placeholder="*********"
       />
-      <p className="text-red-500 text-xs italic">Please enter a password.</p>
     </div>
     <div className="flex items-center justify-between">
       <button

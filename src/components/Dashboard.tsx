@@ -1,105 +1,75 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { firestore, storage } from '../firebaseSetup';
+// Import necessary modules
+import React, { useState, useEffect } from 'react';
+import firebase from 'firebase/app';
+import { getDocs, collection } from 'firebase/firestore';
 
-interface FormData {
-    name: string;
+import { auth, firestore } from '../firebaseSetup';
+import { Link } from 'react-router-dom';
+
+
+
+interface userType {
+    uid: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
     email: string;
-    phone: string;
     password: string;
-    avatar: File | null;
-}
+    phone: string;
+  }
 
-const UserProfileForm: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
-        name: '',
-        email: '',
-        phone: '',
-        password: '',
-        avatar: null
-    });
+const Dashboard = () => {
+    const [users, setUsers] = useState<userType[]>([]);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+  useEffect(() => {
+    // Fetch all users from Firestore
+    const fetchUsers = async () => {
+      try {
+        const userCollection = await firestore.collection('users').get();
+        const userList: userType[] = userCollection.docs.map(doc => doc.data() as userType);
+        setUsers(userList);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
     };
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files ? e.target.files[0] : null;
-        setFormData({ ...formData, avatar: file });
-    };
+    fetchUsers();
+  }, []);
 
-    const handleSubmit =async (e: FormEvent) => {
-        e.preventDefault();
-        // Here you can handle form submission, for example, sending data to an API
-        try {
-            // Upload avatar to Firebase Storage if avatar exists
-            let avatarUrl = '';
-            if (formData.avatar) {
-                const avatarRef = storage.ref().child(formData.avatar.name);
-                await avatarRef.put(formData.avatar);
-                avatarUrl = await avatarRef.getDownloadURL();
-            }
-
-            // Update user profile data in Firestore
-            await firestore.collection('users').add({
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                avatarUrl: avatarUrl, // URL of the uploaded avatar
-                // Add any other fields you need
-            });
-
-            // Clear form after submission
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                password: '',
-                avatar: null
-            });
-
-            console.log('Form submitted successfully!');
-        } catch (error) {
-            console.error('Error submitting form:', error);
-        }
-        console.log(formData);
-    };
-        
-   
-
-    return (
-        <div className="max-w-md mx-auto py-4 px-8 bg-white shadow-lg rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">User Profile</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Name</label>
-                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="border border-gray-300 px-4 py-2 rounded-lg w-full focus:outline-none focus:border-blue-400" placeholder="Your Name" required />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="border border-gray-300 px-4 py-2 rounded-lg w-full focus:outline-none focus:border-blue-400" placeholder="Your Email" required />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="phone" className="block text-gray-700 font-bold mb-2">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="border border-gray-300 px-4 py-2 rounded-lg w-full focus:outline-none focus:border-blue-400" placeholder="Your Phone Number" required />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="password" className="block text-gray-700 font-bold mb-2">Password</label>
-                    <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="border border-gray-300 px-4 py-2 rounded-lg w-full focus:outline-none focus:border-blue-400" placeholder="Your Password" required />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="avatar" className="block text-gray-700 font-bold mb-2">Profile Picture/Avatar</label>
-                    <input type="file" id="avatar" name="avatar" onChange={handleFileChange} accept="image/*" className="border border-gray-300 px-4 py-2 rounded-lg w-full focus:outline-none focus:border-blue-400" placeholder="Upload Profile Picture" />
-                </div>
-                <div className="mt-6">
-                    <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Save</button>
-                </div>
-            </form>
-        </div>
-    );
-
+  return (
+    <div className="container mx-auto">
+    <h1 className="text-2xl font-bold mb-4">User Dashboard</h1>
+    <div className="overflow-x-auto">
+      <table className="table-auto w-full">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-4 py-2">UserID</th>
+            <th className="px-4 py-2">Name</th>
+            <th className="px-4 py-2">Email</th>
+            <th className="px-4 py-2">Phone</th>
+            <th className="px-4 py-2">Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.uid} className="border-b border-gray-200 hover:bg-gray-100">
+              <td className="px-4 py-2">{user.uid}</td>
+              <td className="px-4 py-2">{user.firstName} {user.lastName}</td>
+              <td className="px-4 py-2">{user.email}</td>
+              <td className="px-4 py-2">{user.phone}</td>
+              <td className="px-4 py-2">{user.address}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div className="mt-4 text-center">
+     <Link to="/login" className="text-blue-500 hover:underline">Go to Login</Link>
+    </div>
+  </div>
+  
+  );
 };
 
-
-
-export default UserProfileForm;
+export default Dashboard;

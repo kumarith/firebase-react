@@ -68,7 +68,6 @@ const SignUp: React.FC = () => {
         await auth.signOut(); // Sign out the current user nd go to login, createUserWithEmailAndPassword also signs in
 
         setSignupSuccess(true);
-        alert("here 1")
         await firestore.collection('users').doc(user?.uid).set({
           id:  user?.uid,
           firstName: formData.firstName,
@@ -79,7 +78,6 @@ const SignUp: React.FC = () => {
           phone: formData.phone,
 
         });
-        alert("here 2")
 
 
         // Clear form after submission

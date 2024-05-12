@@ -99,13 +99,13 @@ const Profile: React.FC = () => {
 
   const handleSubmit = async () => {
     
-    alert("hi1");
+    //alert("hi1");
     // Check if email is valid before submitting
     if (!emailError) {
       try {
         setsaveError("");
         setsaveSuccess(true);
-        alert("here 1");
+        //alert("here 1");
         /** Logged in userId is doc id and set new values from form */
         await firestore.collection("users").doc(authContext?.uid).set({
           id: authContext?.uid,
@@ -116,10 +116,8 @@ const Profile: React.FC = () => {
           email: formData.email,
           phone: formData.phone,
         });
-        alert("here 2");
-
+        //alert("here 2");
         setsaveSuccess(true);
-
         console.log("Saved info successfully!");
       } catch (error) {
         console.error("Error creating user:", error);
@@ -295,8 +293,6 @@ const Profile: React.FC = () => {
             role="button"
             type="submit"
             onClick={() => handleSubmit()}
-
-
           >
             <FaSave />
             <span>Save </span>

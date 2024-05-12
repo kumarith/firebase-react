@@ -20,12 +20,14 @@ const App =  () => {
     <Router>
         <Routes>
           <Route path="/login" element={<SignIn/>} />
+          <Route path="/" element={<SignIn/>} />
           <Route path="/signup" element={<SignUp/>} />
           { /* <Route path="/profile" element={<ProtectedRoute children={<Profile />} />} /> */}
           <Route path="/profile" element={<Profile/>}  >
-
-           
           </Route>
+          /** SHoule be ideally in protecteed route after verifying user role as admin */
+          <Route path="/dashboard" element={<Dashboard/>}  />
+
         </Routes>
       </Router>
       </AuthProvider>

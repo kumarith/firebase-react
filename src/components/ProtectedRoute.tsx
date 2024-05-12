@@ -10,7 +10,6 @@ interface Props {
  
 const ProtectedRoute: React.FC<Props> = ({children }) => {
     const user = React.useContext(AuthContext);
-  
     console.log("Check user in Private: ", user);
     if (!user) {
       return <Navigate to="/" />;
