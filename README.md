@@ -9,6 +9,12 @@ firebase config to firebaseSetup.ts and 'npm run dev'
 - In the Your apps card, select the nickname of the app for which you need a config object.
 - Select Config from the Firebase SDK snippet pane.  Get SDK for Javascript.
 
+# App setup
+
+![App Flow](https://github.com/kumarith/firebase-react/blob/main/Firebase.drawio.png)
+
+
+
 ----------------------------------------------------------------------
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
